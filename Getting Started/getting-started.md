@@ -1,0 +1,1 @@
+https://www.notion.so/withfig/Quick-Start-Guide-ff35e321cf034dafbb5f8b564720edaa

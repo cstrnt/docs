@@ -1,0 +1,1 @@
+https://docs.withfig.com/get-started/fig-home/the-sidebar
