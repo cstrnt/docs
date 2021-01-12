@@ -1,1 +1,8 @@
-https://www.notion.so/withfig/The-Fig-CLI-3b60b216dc6e4b149ad51aa8d7f1eb99
+# The Fig CLI
+
+- fig invite
+- fig update
+- fig ...
+
+type fig into terminal and get all options
+
