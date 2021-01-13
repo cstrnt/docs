@@ -1,3 +1,5 @@
+# API
+
 On this page
 
 - [Root Object](#Root Object)
@@ -48,11 +50,11 @@ Subcommands are recursive by nature.
 | displayName           | string                             | ☐        | the name prop       |                                                              |
 | insertValue           | string                             | ☐        | the name prop       | Refer to `insertValue` under [Suggestion Object](#Suggestion Object) |
 | description           | string                             | ☐        | null                | Refer to `description` under [Suggestion Object](#Suggestion Object) |
-| subcommands           | array of Subcommand objects        | ☐        |                     |                                                              |
+| subcommands           | array of Subcommand objects        | ☐        |                     | Refer to [Subcommand Object](#Subcommand Object) for the subcommand schema |
 | icon                  | string                             | ☐        | the subcommand icon | Refer to `icon` under [Suggestion Object](#Suggestion Object) |
-| options               | array of Option objects            | ☐        |                     |                                                              |
-| args                  | Arg object or array of Arg objects | ☐        |                     |                                                              |
-| additionalSuggestions | array of Suggestion objects        | ☐        |                     |                                                              |
+| options               | array of Option objects            | ☐        |                     | Refer to [Option Object](#Option Object) for the Option schema |
+| args                  | Arg object or array of Arg objects | ☐        |                     | Refer to [Arg Object](#Arg Object) for the Arg schema        |
+| additionalSuggestions | array of Suggestion objects        | ☐        |                     | Refer to [Suggestion Object](#Suggsetion Object) for the suggestion schema. Use additionalSuggestions to make custom suggestions. |
 
 
 
@@ -66,7 +68,7 @@ Options are defined to signal to Fig that there may be a flag or option followin
 | displayName   | string                             | ☐        |         |                                                              |
 | insertValue   | string                             | ☐        |         | Refer to `insertValue` under [Suggestion Object](#Suggestion Object) |
 | description   | string                             | ☐        |         | Refer to `description` under [Suggestion Object](#Suggestion Object) |
-| args          | Arg object or array of Arg objects | ☐        |         |                                                              |
+| args          | Arg object or array of Arg objects | ☐        |         | Refer to [Arg Object](#Arg Object) for the Arg schema        |
 | icon          | string                             | ☐        |         | Refer to `icon` under [Suggestion Object](#Suggestion Object) |
 
 **Note:** We rely on Arg objects to map what the user has typed to a completion spec. e.g. if you were building the git completion spec, under `git commit` you would specify an option for `-m, --message`.
@@ -87,7 +89,7 @@ An object specifying a user generated argument.
 | displayName   | string                                          | ☐        | the name prop                                                |                                                              |
 | insertValue   | string                                          | ☐        | the name prop                                                | Refer to `insertValue` under [Suggestion Object](#Suggestion Object) |
 | description   | string                                          | ☐        | null                                                         | Refer to `description` under [Suggestion Object](#Suggestion Object) |
-| suggestions   | array of strings or array of Suggestion objects | ☐        | null                                                         |                                                              |
+| suggestions   | array of strings or array of Suggestion objects | ☐        | null                                                         | Refer to [Suggestion Object](#Suggsetion Object) for the suggestion schema. Use this prop to specify custom suggestions. |
 | icon          | string                                          | ☐        | auto-generated based on type prop. If type doesn't exist, will be ? | Refer to `icon` under [Suggestion Object](#Suggestion Object) |
 | template      | string                                          | ☐        |                                                              | Must be either `"filepaths"` or `"folders"`                  |
 | generators    | Generator object or array of Generator objects  | ☐        |                                                              |                                                              |
@@ -98,20 +100,18 @@ An object specifying a user generated argument.
 
 Generators are used to programatically generate suggestion objects. For example, they can be used to fetch and suggest a list of git remotes, or to grab all the folders in the current working directory.
 
-| Property Name             | Type                                                         | Required | Default | Description                             |
-| ------------------------- | ------------------------------------------------------------ | -------- | ------- | --------------------------------------- |
-| template                  | string                                                       | ☐        |         | Must be either "filepaths" or "folders" |
-| filterTemplateSuggestions | function * Input: array of Suggestion objects * Output: array of Suggestion objects | ☐        |         |                                         |
-| script                    | string OR function function * Input: array of strings * Output: string | ☐        |         |                                         |
-| splitOn                   | string                                                       | ☐        |         |                                         |
-| postProcess               | function * Input: string * Output: array of Suggestion objects | ☐        |         |                                         |
-| custom                    | async function  * Input: array of strings * Output: array of Suggestion objects | ☐        |         |                                         |
-| trigger                   | string or function function * Inputs: string, string  * Output: boolean | ☐        |         |                                         |
-| filterTerm                | string or function function * Input: string * Output: string | ☐        |         |                                         |
+| Property Name             | Type                                                         | Required | Description                                                  |
+| ------------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
+| template                  | string                                                       | ☐        | Must be either "filepaths" or "folders"                      |
+| filterTemplateSuggestions | function <br />Input: array of Suggestion objects <br />Output: array of Suggestion objects | ☐        | Function that lets you filter the Suggestion objects output by the template. |
+| script                    | string OR function<br /><u>function</u> <br />Input: array of strings <br />Output: string | ☐        | The shell command to execute in the user's current working directory. The output is a string. It is then converted into an array of Suggestion objects using `splitOn` or `postProcess` |
+| splitOn                   | string                                                       | ☐        | As splitting the output of `script` is such a common use case for `postProcess`, we build the `splitOn` property. Simply define a string to split the output of script on (e.g. `","` or `"\n"` and Fig will do the work of the `postProcess` prop for you. |
+| postProcess               | function<br />Input: string<br />Output: array of Suggestion objects | ☐        | Define a function that takes a single input: the output of executing script. This function then return an array of Suggestion objects that will be rendered by Fig. |
+| custom                    | async function <br />Input: array of strings<br />Output: array of Suggestion objects | ☐        |                                                              |
+| trigger                   | string or function<br /><u>function</u><br />Inputs: string, string<br /> Output: boolean | ☐        | Defines a trigger that determines when to regenerate suggestions for this argument by re-running the generators. |
+| filterTerm                | string or function <br /><u>function</u> <br />Input: string <br />Output: string | ☐        | A function to determine what part of the string the user is currently typing we should use to filter our suggestions. |
 
-At least one of `template`, `script`, or `custom` are **required**. Only one of these three props is allowed per generator.
+**Note**: At least one of `template`, `script`, or `custom` are **required**. Only one of these three props is allowed per generator.
 
-Learn more:
-
-[Generators](./generators.md)
+For more details on generators and their properties, see [Generators](./generators.md).
 

@@ -67,12 +67,12 @@ args: {
 }
 ```
 
-Properties
+**Properties**
 
 | Property                  | Data Type                                                    | Required | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
 | template                  | string                                                       | ☐        | One of: <br />- "filepaths": shows all files AND folders at current working directory (like running ls). <br />- "folders": only shows folders in current working directory (like running ls then filtering on.<br />These template also allow users to type / at the end of a directory and Fig will run show the files/folders in the new subdirectory. |
-| filterTemplateSuggestions | function(suggestions: SuggestionObject[ ]): SuggestionObject | ☐        | **[Optional]**<br /><br />A function that let's you filter the array of Suggestion objects output by the template. e.g. if you only wanted to show files ending in `.js` you could use a filter method inside.<br /><br />**Function Parameters 1**<br />. suggestions: an array of Suggestion objects that was output by the template <br /><br />**Output**<br />an array of Suggestion objects that was output by the template |
+| filterTemplateSuggestions | function(suggestions: SuggestionObject[ ]): SuggestionObject | ☐        | **[Optional]**<br /><br />A function that let's you filter the array of Suggestion objects output by the template. e.g. if you only wanted to show files ending in `.js` you could use a filter method inside.<br /><br />**Function Parameters 1**<br />suggestions: an array of Suggestion objects that was output by the template <br /><br />**Output**<br />an array of Suggestion objects that was output by the template |
 
 **Notes & Hints**
 
@@ -117,7 +117,7 @@ args: {
 }
 ```
 
-Properties
+**Properties**
 
 | Property    | Data Type                                                    | Required | Description                                                  |
 | ----------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
@@ -173,7 +173,7 @@ args: {
 
 The properties below are exactly the same as **Script as a String** except for the `script` prop. In that case
 
-Properties
+**Properties**
 
 | Property    | Data Type                                                    | Required | Description                                                  |
 | ----------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
@@ -185,39 +185,41 @@ Properties
 
 ## Custom Function
 
-**Note:** The [Script as a String](#Script as a String) or [Script as a Function](#Script as a Function) generator functions should suit your needs most of the time. Before writing a Custom Function, we suggest doing a very simple version of the spec you want to write using the generators first. It may not capture every single use case, but if it's > 60% or 70% of the use cases, worst case, Fig just won't show for the remaining use cases. You can also run a string that is multiple commands e.g. `echo "The quick"; echo "brown fox";` to get multiple outputs in one go. Once that's working, then try a Custom Function.
+**Note:** The [Script as a String](#Script as a String) or [Script as a Function](#Script as a Function) generator functions should suit your needs most of the time. Before writing a Custom Function, we suggest writing a simple version of the spec using generators first. If it captures > 60% or 70% of the use cases, worst case, Fig just won't show for the remaining use cases. You can also run a string that is multiple commands e.g. `echo "The quick"; echo "brown fox";` in Script as a String to get multiple outputs. Once that's working, then try a Custom Function.
 
-If you have read everything and really think you know what you're doing, then please dig in :). In fact, if you are going to write a Custom Function, please email us, we'd love to help
+If you are going to write a Custom Function, please email us, we'd love to help
 
 [hello@withfig.com](mailto:hello@withfig.com)
 
+---
 
+Fig's completion spec standard accounts for the vast majority of CLI tools, but some features don't work with the standard spec. Custom Functions inside generators enable you to write more complex logic and generate suggestions based on user input unique to a certain CLI tool.
 
-Fig's completion spec standard accounts for the vast majority of CLI tools. However, CLI tools grow in ability and some features don't work with the standard spec. Custom Functions inside generators should enable you to solve for this and do way way more.
+Custom Functions let you define a function that takes an array of the user's input, run multiple shell commands on the user's machine, and then generate suggestions to display. When using Custom Functions, you will likely have to work pretty closely with [Triggers](#trigger).
 
-Custom Functions let you define a function that takes an array of what the user has typed, run as many shell commands as you'd like on the user's machine, and then generate suggestions to display. When using Custom Functions, you will likely have to work pretty closely with [Triggers](#trigger).
-
-Custom functions are so customisable, you could theoretically add one to an arg of your root command and build your own autocomplete server, all in JavaScript.
-
-Before we get into the syntax, let's look at where we would use one of these.
+Custom functions are so customisable, you could theoretically add one to an arg of your root command and build your own autocomplete server.
 
 ### When to use Custom Functions
 
-1. An argument can be one of many things and you want to provide suggestions once you have worked out which "thing"  the user is typing. e.g. in `git` you can identify a commit in many many ways.
+**1. An argument can be one of many types, and you want to provide suggestions once you have more context on what type the user is inputting**. 
+
+e.g. `git checkout` supports multiple types of arguments
 
 - `git checkout staging` → branch
 - `git checkout h8ne3x` → commit hash
 - `git checkout HEAD~` → Relative refspec
 
-(If you're interested [here are a lot more](https://stackoverflow.com/a/18605496/2218728) )
+(If you're interested [here are a lot more](https://stackoverflow.com/a/18605496/2218728))
 
-You could just use a **script as a string** Generator and only suggest branches by using `git branch`. This would be nice and would work fine. But it would be cool if you could type `HEAD^^` and have Fig tell you which commit description you are referring to... Custom functions let you do this.
+You could just use a **script as a string** Generator and only suggest branches by using `git branch`. This would be nice and would work fine. But it would be cool if you could type `HEAD^^` and have Fig tell you which commit description you are referring to. Custom functions let you do this.
 
-**2. An argument takes its own sub-arguments that are not delimited by a space** e.g. in `npm` you can refer to a package in many ways AND then you can provide sub-arguments like the version, tag, and range, all within the same string
+**2. An argument takes its own sub-arguments that are not delimited by a space** 
+
+e.g. in `npm` you can refer to a package in many ways AND then you can provide sub-arguments like the version, tag, and range, all within the same string.
 
 ![](../assets/autocomplete/generators/subargs.png)
 
-Your function could do multiple regex matches on the argument the user is inputting. If it begins with an `@` symbol, then suggest a list of scopes. As soon as the user types a `/` suggest a list of packages. As soon as the user types another `@` symbol, suggest a list of tags or versions associate with the input package name...
+Your function could do multiple regex matches on the argument the user is inputting. If it begins with an `@` symbol, then run a script to suggest a list of scopes. When the user types `/`, suggest a list of packages. As soon as the user types another `@` symbol, suggest a list of tags or versions associate with the input package name.
 
 ### Syntax
 
@@ -319,4 +321,4 @@ filterTerm: "/"
 
 Finally, if you have multiple generators, Fig will only take into account the very last filterTerm function or string you define.
 
-Note: If you want to use multiple generators for an argument, and one of the generators is template suggestions, you should make sure to include the template generator first in the generators array and to define your filterTerm function after.
+**Note**: If you want to use multiple generators for an argument, and one of the generators is template suggestions, you should make sure to include the template generator first in the generators array and to define your filterTerm function after.
