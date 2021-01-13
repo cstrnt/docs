@@ -10,7 +10,7 @@ Shell commands are executed by generators.
 - **Script as a Function**: The output of the `script` prop function
 - **CustomFunction**: Any time `await runFigCommand("foo")`
 
-[Generators](https://www.notion.so/Generators-3f8601593c1c4c58a497adbfd658a11d)
+More on [Generators](./generators.md)
 
 ### How are shell commands executed
 

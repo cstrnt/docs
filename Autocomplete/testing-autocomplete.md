@@ -2,7 +2,7 @@
 
 ## Testing FAQs
 
-### What's the best way to test my spec
+### What's the best way to test my spec?
 
 1. Make sure Fig is on and autocomplete is working
 2. Every time you make a change to your completion spec:
@@ -19,19 +19,19 @@ However, to be more efficient, if you use the same CLI tool that Fig has already
 
 Let's say you are testing a completion spec for a made up CLI tool called `foobar`. When you're testing the `foobar` completion spec, chances are you are typing `foobar` repeatedly. This means the `foobar` completion spec will stay in memory. By typing `cd` on a new line, you are loading up the `cd` completion spec. When you type in `foobar` after this, we will re-load up the `foobar` completion spec with all your new edits.
 
-## **Where should I save my completion spec?**
+### Where should I save my completion spec?
 
 Fig reads completion specs from the following folder: `~/.fig/autocomplete`
 
 You can edit your spec there. Or you can see the **testing best practices** below for a smarter way that makes
 
-## **How do I view the logs?**
+### How do I view the logs?
 
 Right click the popup window and click **Inspect Element.** It will open up Safari's web dev console
 
 ![](../assets/autocomplete/testing-a-spec/inspect.png)
 
-## **My spec isn't showing up in autocomplete**
+### My spec isn't showing up in autocomplete
 
 1. Is autocomplete working? Try going to a new line in the terminal and typing `git` or `cd` plus a space.
 
@@ -44,13 +44,13 @@ Right click the popup window and click **Inspect Element.** It will open up Safa
 
 3. If Fig still doesn't work, message us in [Slack](https://figcommunity.slack.com/join/shared_invite/zt-fupa9n8g-sfHm8MyBn1DBaCj8SoIxSA#/) or email [hello@withfig.com](mailto:hello@withfig.com)
 
-## **Fig isn't working. What are some debug steps**
+### Fig isn't working. What are some debug steps
 
 View our support guide
 
 [Fig User Manual](https://www.notion.so/Fig-User-Manual-e2858870edc44f8aa21843be79786a85)
 
-# Helpful Hacks
+### Helpful Hacks
 
 **If you plan to push your completion spec publicly to our [withfig/autocomplete](https://github.com/withfig/autocomplete) github repo, read below.**
 
