@@ -1,4 +1,4 @@
-# Getting Started
+# Introduction
 
 Welcome to the Fig documentation!
 
@@ -14,11 +14,11 @@ Welcome to the Fig documentation!
 
 New to Fig? Here's an overview of autocomplete and what Fig does: [Getting Started](./Getting Started/getting-started.md).
 
-Want to install Fig? Read through the [Installation Steps](./Getting Started/installation-steps.md).
+To install Fig, read through the [Installation Steps](./Getting Started/installation-steps.md).
 
 For troubleshooting and usage information, see the [User Manual](./Support/guide.md).
 
-If you want to contribute and build support for any CLI tool with autocomplete, we recommend you take a look at the [Getting Started with Autocomplete Specs](./Autocomplete/getting-started-with-autocomplete.md).
+If you want to contribute and build support for any CLI tool with autocomplete, we recommend you take a look at the [Getting Started with Autocomplete Specs](./Autocomplete/getting-started).
 
 
 

@@ -64,7 +64,7 @@ Options are defined to signal to Fig that there may be a flag or option followin
 
 | Property Name | Type                               | Required | Default | Description                                                  |
 | ------------- | ---------------------------------- | -------- | ------- | ------------------------------------------------------------ |
-| name          | string or array of strings         | ☑        |         | Refer to `name` under [Suggestion Object](#Suggestion Object) |
+| name          | string or array of strings         | ☑        |         |                                                              |
 | displayName   | string                             | ☐        |         |                                                              |
 | insertValue   | string                             | ☐        |         | Refer to `insertValue` under [Suggestion Object](#Suggestion Object) |
 | description   | string                             | ☐        |         | Refer to `description` under [Suggestion Object](#Suggestion Object) |
@@ -90,15 +90,17 @@ An object specifying a user generated argument.
 | insertValue   | string                                          | ☐        | the name prop                                                | Refer to `insertValue` under [Suggestion Object](#Suggestion Object) |
 | description   | string                                          | ☐        | null                                                         | Refer to `description` under [Suggestion Object](#Suggestion Object) |
 | suggestions   | array of strings or array of Suggestion objects | ☐        | null                                                         | Refer to [Suggestion Object](#Suggsetion Object) for the suggestion schema. Use this prop to specify custom suggestions. |
-| icon          | string                                          | ☐        | auto-generated based on type prop. If type doesn't exist, will be ? | Refer to `icon` under [Suggestion Object](#Suggestion Object) |
+| icon          | string                                          | ☐        | auto-generated based on type prop. If type doesn't exist, will be `?` | Refer to `icon` under [Suggestion Object](#Suggestion Object) |
 | template      | string                                          | ☐        |                                                              | Must be either `"filepaths"` or `"folders"`                  |
-| generators    | Generator object or array of Generator objects  | ☐        |                                                              |                                                              |
+| generators    | Generator object or array of Generator objects  | ☐        |                                                              | Generators let you run shell commands on the user's device to *generate s*uggestions for arguments |
 
 **Note**: Nothing is required in an Arg object. The presence of it in a Subcommand or Option object will signal that the given subcommand or option will take an arg. It is important to specify it, even if you don't fill in the details (literally do `args: {},` ) otherwise the parsing will be messed up.
 
 ### Generator Object
 
 Generators are used to programatically generate suggestion objects. For example, they can be used to fetch and suggest a list of git remotes, or to grab all the folders in the current working directory.
+
+For more details on generators and their properties, see [Generators](./generators.md).
 
 | Property Name             | Type                                                         | Required | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
@@ -107,7 +109,7 @@ Generators are used to programatically generate suggestion objects. For example,
 | script                    | string OR function<br /><u>function</u> <br />Input: array of strings <br />Output: string | ☐        | The shell command to execute in the user's current working directory. The output is a string. It is then converted into an array of Suggestion objects using `splitOn` or `postProcess` |
 | splitOn                   | string                                                       | ☐        | As splitting the output of `script` is such a common use case for `postProcess`, we build the `splitOn` property. Simply define a string to split the output of script on (e.g. `","` or `"\n"` and Fig will do the work of the `postProcess` prop for you. |
 | postProcess               | function<br />Input: string<br />Output: array of Suggestion objects | ☐        | Define a function that takes a single input: the output of executing script. This function then return an array of Suggestion objects that will be rendered by Fig. |
-| custom                    | async function <br />Input: array of strings<br />Output: array of Suggestion objects | ☐        |                                                              |
+| custom                    | async function <br />Input: array of strings<br />Output: array of Suggestion objects | ☐        | Custom Functions let you define a function that takes an array of the user's input, run multiple shell commands on the user's machine, and then generate suggestions to display. |
 | trigger                   | string or function<br /><u>function</u><br />Inputs: string, string<br /> Output: boolean | ☐        | Defines a trigger that determines when to regenerate suggestions for this argument by re-running the generators. |
 | filterTerm                | string or function <br /><u>function</u> <br />Input: string <br />Output: string | ☐        | A function to determine what part of the string the user is currently typing we should use to filter our suggestions. |
 

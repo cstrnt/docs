@@ -1,5 +1,16 @@
 # Generators
 
+On this page:
+
+- [Templates](#Templates)
+- [Script as a String](#Script as a String)
+- [Script as a Function](#Script as a Function)
+- [Custom Function](#Custom Function)
+- [Trigger](#Trigger)
+- [Filter Term](#Filter Term)
+
+
+
 ## Quick Summary
 
 Generators let you run shell commands on the user's device to *generate s*uggestions for arguments
@@ -29,8 +40,6 @@ Generators let you run shell commands on the user's device to *generate s*uggest
 There are 4 types of generators. At the end of the day, they all give you the ability to define what shell command(s) to run. Then given that output, parse it however you'd like to produce Suggestion objects.
 
 They types of Generator are listed below in order of customisability.
-
-[Generator Types Summary](https://www.notion.so/1501f31d39724506a0a7b05501be650c)
 
 We would say the vast majority of Generators you make will be using **Templates** and/or **Script as a String**
 
@@ -71,7 +80,7 @@ args: {
 
 | Property                  | Data Type                                                    | Required | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
-| template                  | string                                                       | ☐        | One of: <br />- "filepaths": shows all files AND folders at current working directory (like running ls). <br />- "folders": only shows folders in current working directory (like running ls then filtering on.<br />These template also allow users to type / at the end of a directory and Fig will run show the files/folders in the new subdirectory. |
+| template                  | string                                                       | ☐        | One of: <br />- "filepaths": shows all files AND folders at current working directory (like running ls). <br />- "folders": only shows folders in current working directory (like running ls then filtering on.<br /><br />These templates also allow users to type / at the end of a directory and Fig will run show the files/folders in the new subdirectory. |
 | filterTemplateSuggestions | function(suggestions: SuggestionObject[ ]): SuggestionObject | ☐        | **[Optional]**<br /><br />A function that let's you filter the array of Suggestion objects output by the template. e.g. if you only wanted to show files ending in `.js` you could use a filter method inside.<br /><br />**Function Parameters 1**<br />suggestions: an array of Suggestion objects that was output by the template <br /><br />**Output**<br />an array of Suggestion objects that was output by the template |
 
 **Notes & Hints**
@@ -86,7 +95,7 @@ args: {
 
 If you're suggesting something other than files or folders, we recommend using this. This let's you run a mini-script / command on the user's computer. The script runs in the user's current working directory and in the same shell. It's as if the user typed the command themselves.
 
-The output from the script you specify is then converted to Suggestion objects. We can do this for you with `splitOn` or you can process the output yourself with `postProcess`
+The output from the script you specify is then converted to Suggestion objects. We can do this for you with `splitOn` or you can process the output yourself with `postProcess`. Not that you must specify at least one of `splitOn` or `postProcess`.
 
 ```jsx
 args: {
@@ -95,7 +104,6 @@ args: {
 		splitOn: "\\n",
 		// **OR**
 		postProcess: (scriptOutput: string) => {
-
 			var arr = scriptOutput.split("\\n")
 			
 			// return an array of Suggestion Objects
@@ -105,9 +113,7 @@ args: {
 						icon: "🌱"
 					}
 			})
-			
 		},
-
 		
 		// [optional]
 		trigger: (after: string, before: string) {
@@ -123,7 +129,7 @@ args: {
 | ----------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
 | script      | string                                                       | ☐        | The shell command to execute in the user's current working directory. The output is a string. It is then converted into an array of Suggestion objects using `splitOn` or `postProcess`<br /><br /> e.g. git branch → show all the remote git repos available |
 | postProcess | function(scriptOutput: string): SuggestionObject { } <br /><br />**Input**: output of executing script <br />**Output**: array of Suggestion objects | ☐        | **[Must specify one of postProcess or splitOn]** <br /><br />Define a function that takes a single input: the output of executing script. This function then return an array of Suggestion objects that will be rendered by Fig.  <br /><br />**Examples** <br />If `script` outputs data separated cleanly by newlines, or commas... <br />- split the input on new lines <br />- map or filter over your new array <br />- if each line had columns, split it again during the map<br />If `script` outputs json data,  use JSON.parse.<br /><br />**Other ideas** - use try/catch and return an empty array if there's an error |
-| splitOn     | string                                                       | ☐        | [Must specify one of  splitOn OR postProcess] <br /><br />As splitting the output of `script` is such a common use case for `postProcess`, we build the `splitOn` property. Simply define a string to split the output of script on (e.g. `","` or `"\n"` and Fig will do the work of the `postProcess` prop for you.  <br /><br />This is a simple and fast method to generate suggestions. If you want any more control over the parsing (like filtering) or you want more control over the UI, use `postProcess`. <br /><br />e.g. if the script was `git branch`, specifying splitOn = \n would split the output on new lines and automatically create a Suggestion object for each element. |
+| splitOn     | string                                                       | ☐        | As splitting the output of `script` is such a common use case for `postProcess`, we build the `splitOn` property. Simply define a string to split the output of script on (e.g. `","` or `"\n"` and Fig will do the work of the `postProcess` prop for you.  <br /><br />This is a simple and fast method to generate suggestions. If you want any more control over the parsing (like filtering) or you want more control over the UI, use `postProcess`. <br /><br />e.g. if the script was `git branch`, specifying splitOn = \n would split the output on new lines and automatically create a Suggestion object for each element. |
 | trigger     | function                                                     | ☐        | **[Optional]** See [Trigger](#Trigger)                       |
 | filterTerm  | function or string                                           | ☐        | **[Optional]** See [Filter Term](#filter term)               |
 
