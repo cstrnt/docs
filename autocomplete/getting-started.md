@@ -12,8 +12,8 @@ Autocomplete specs add support for a CLI tool to Fig's autocomplete. They serve 
   - i.e. your description of the `-m` option in `git commit -m` is what will displayed to the user!
 
 
-```js
-var completionSpec = { // Command Object
+```ts
+const completionSpec:Fig.Spec = { // Command Object
   name: "git",
   description: "the stupid content tracker",
   subcommands: [ ... ], // Array of Command Objects 

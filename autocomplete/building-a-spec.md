@@ -6,11 +6,9 @@ In this section, you'll learn the autocompletion spec skeleton, and understand h
 
 To start, let's define the `completionSpec` variable, and add a `name` and `description`. Fig uses the `name` property when figuring out which spec to load. In this example, when the user enters "git" into their terminal, our completionSpec will be loaded. The name property should match the file name.
 
-Make sure to define your spec exactly as shown, using `var` instead of `const` or `let`. `completionSpec` is case sensitive!
-
-```js
-var completionSpec = {
-	name: "git",
+```ts
+const completionSpec:Fig.Spec = {
+  name: "git",
   description: "the stupid content tracker"
 }
 ```
@@ -21,8 +19,8 @@ Now that we have our spec defined, let's add autocomplete support for `git check
 
 `checkout` is a subcommand of `git`, so we'll include it under `git`'s subcommands array. The subcommand object takes a name, description, as well as its own options and arguments. For more information on subcommand's properties, see [Subcommand Object](/api#subcommand-object).
 
-```js
-var completionSpec = {
+```ts
+const completionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -44,8 +42,8 @@ Under the `checkout` subcommand, we added an empty args object. Including this a
 
 Nested under the `-b` option is another argument named branch, telling Fig that the option accepts an argument. The Fig parser won't function properly if args aren't included when there should be user input, so don't forget to at least insert an empty `args: {}` propety when there should be an argument. Here, since both `args` and `options` are available under `checkout`, Fig expects either an option or an argument.
 
-```js
-var completionSpec = {
+```ts
+const completionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -69,12 +67,12 @@ var completionSpec = {
 
 #### 4. Including an option to the root object
 
-We now have a spec that supports the primary functionality of `git checkout`. The root object, defined as `var completionSpec`, is actually a command in itself, with the same properties as the [Subcommand Object](/api#subcommand-object).
+We now have a spec that supports the primary functionality of `git checkout`. The root object, defined as `const completionSpec`, is actually a command in itself, with the same properties as the [Subcommand Object](/api#subcommand-object).
 
 If we want to add support for `git --version`, the `--version` flag can be added as an option under the root object as follows:
 
-```js
-var completionSpec = {
+```ts
+const completionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -114,7 +112,7 @@ Above, we put together a spec that supports `git checkout`, and `git --version`.
 
 When a user runs `git checkout`, they typically want to move to another local branch. In our current configuration, Fig is expecting an argument in the form of the empty args object we added to checkout. Fig doesn't provide any suggestions by default when an empty args object is provided.
 
-```js
+```ts
 {
   name: "checkout",
   description: "Switch branches or restore working tree files",
@@ -130,15 +128,18 @@ Our generator runs a script in the user's terminal, and Fig will capture the out
 
 The `postProcess` function then captures the output from the terminal as a string, and within the function you can write logic to convert the output string into suggestions. In our function, we want to split our list of branches by the newline character, and convert each line containing a branch into a [Suggestion Object](#Suggestion Object) containing a `name` and `description`. Note that `postProcess` should return an array of generated suggestion objects.
 
-```js
-var branches = {
+```ts
+const branches:Fig.Generator = {
   script: "git branch --no-color",
-  postProcess: function (out) {
-    if (out.startsWith("fatal:")) {
+  postProcess: function (output) {
+    if (output.startsWith("fatal:")) {
       return []
     }
-    return out.split('\n').map((branch) => {
-      return { name: branch.replace("*", "").trim(), description: "branch" }
+    return output.split('\n').map((branch) => {
+      return { 
+        name: branch.replace("*", "").trim(),
+        description: "branch"
+      }
     })
   }
 }
@@ -148,20 +149,23 @@ var branches = {
 
 The last step is to pass our new generator into the spec. Because we want the generator to get the list of branches following `git checkout`, we pass `branches` into the `checkout` subcommand's args. 
 
-```js
-var branches = {
+```ts
+const branches: Fig.Generator = {
   script: "git branch --no-color",
-  postProcess: function (out) {
-    if (out.startsWith("fatal:")) {
+  postProcess: function (output) {
+    if (output.startsWith("fatal:")) {
       return []
     }
-    return out.split('\n').map((branch) => {
-      return { name: branch.replace("*", "").trim(), description: "branch" }
+    return output.split('\n').map((branch) => {
+      return { 
+        name: branch.replace("*", "").trim(), 
+        description: "branch"
+      }
     })
   }
 }
 
-var completionSpec = {
+const completionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -209,20 +213,23 @@ Let's improve our `git` completion spec by adding support for `git add`. When ru
 
 We include the `add` subcommand under `checkout`, which accepts one argument. Entering the "filepaths" template under that argument automatically suggests files from the user's working directory when `git add` is typed into the terminal.
 
-```js
-var branches = {
+```ts
+const branches:Fig.Spec = {
   script: "git branch --no-color",
-  postProcess: function (out) {
-    if (out.startsWith("fatal:")) {
+  postProcess: function (output) {
+    if (output.startsWith("fatal:")) {
       return []
     }
-    return out.split('\n').map((branch) => {
-      return { name: branch.replace("*", "").trim(), description: "branch" }
+    return output.split('\n').map((branch) => {
+      return { 
+        name: branch.replace("*", "").trim(), 
+        description: "branch"
+      }
     })
   }
 }
 
-var completionSpec = {
+const completionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [

@@ -2,13 +2,10 @@
 
 ## The Fig Linter
 
-The [withfig/autocomplete](https://github.com/withfig/autocomplete) repo contains a linter program that can be used to validate your specs automatically. It returns syntax and type errors from your autocomplete spec.
+The [withfig/autocomplete](https://github.com/withfig/autocomplete) repo contains uses Typescript and its compiler to validate your specs automatically. It returns syntax and type errors from your autocomplete spec.
 
-To use the linter, run the following command from the root autocomplete folder.
-`node linter.js specs/[specName].js`
-
-To run the linter on ALL specs in the /specs folder, run
-`node linter.js` or `npm test`.
+To typecheck all specs in the /specs folder, simply run
+`npm test`.
 
 Note that you'll need to run `npm install` to grab the right dependencies.
 

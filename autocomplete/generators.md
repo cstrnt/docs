@@ -39,7 +39,7 @@ Filepaths or folders are very common arguments for subcommands. e.g.
 
 Because it's so common, Fig has predefined these arguments for you as a template.
 
-```js
+```ts
 // Define templates inside generators in order
 // to use the filterTemplateSuggestions function
 
@@ -47,7 +47,7 @@ args: {
   generator: {
     template: "filepaths",
     filterTemplateSuggestions: (suggestions) => { //optional
-      var jsOnly = suggestions.filter((elm) => return elm.endsWith(".js"))
+      const jsOnly = suggestions.filter((suggestion) => return suggestion.endsWith(".js"))
       return jsOnly
     }
   }
@@ -83,25 +83,27 @@ If you're suggesting something other than files or folders, we recommend using t
 
 The output from the script you specify is then converted to Suggestion objects. We can do this for you with `splitOn` or you can process the output yourself with `postProcess`. Not that you must specify at least one of `splitOn` or `postProcess`.
 
-```js
-args: {
-  script: "git branch"
-  splitOn: "\\n",
-  // **OR**
-  postProcess: (scriptOutput: string) => {
-    var arr = scriptOutput.split("\\n")  
-	  // return an array of Suggestion Objects
-    return arr.map((elm) => {
-      return {
-        name: elm,
-        icon: "🌱"
-      }
-    })
-  },
-    // [optional]
-  trigger: (after: string, before: string) {
-    if before.countSlash !== after.countSlash return true
-    else return false
+```ts
+{
+  args: {
+    script: "git branch"
+    splitOn: "\\n",
+    // **OR**
+    postProcess: (scriptOutput: string) => {
+      const arr = scriptOutput.split("\\n")  
+      // return an array of Suggestion Objects
+      return arr.map((elm) => {
+        return {
+          name: elm,
+          icon: "🌱"
+        }
+      })
+    },
+      // [optional]
+    trigger: (after: string, before: string) {
+      if before.countSlash !== after.countSlash return true
+      else return false
+    }
   }
 }
 ```
@@ -133,25 +135,27 @@ When running `git checkout master`, `context` equals ["git", "checkout", "master
 
 Context can discern different components including those grouped by quotes. When running `touch "new file"`, `context` equals ["touch", "new file"].
 
-```js
-args: {
-  // Take an array of what the user has already input
-  // e.g. 
-  script: function (context: Array<string>) { 		
-    var myScript; 
-				
-    if (contextArray) {
-      // Return string
-      return myScript
-    },
+```ts
+{
+  args: {
+    // Take an array of what the user has already input
+    // e.g. 
+    script: function (context: Array<string>) { 		
+      const myScript; 
+          
+      if (contextArray) {
+        // Return string
+        return myScript
+      },
 
-    splitOn: "",
-    // **OR**
-    postProcess: (scriptOutput: string) => {			
-  },
-		
-  // [optional]
-  trigger: (after: string, before: string) {
+      splitOn: "",
+      // **OR**
+      postProcess: (scriptOutput: string) => {			
+    },
+      
+    // [optional]
+    trigger: (after: string, before: string) {
+    }
   }
 }
 ```
@@ -204,23 +208,25 @@ Your function could do multiple regex matches on the argument the user is inputt
 
 ### Syntax
 
-```js
-args: {  
-  generator: {
-    custom: async function generateSuggestions(context: Array<string>): SuggestionObject {
-      var currentArg = context[-1]
-      var out;
-      if (currentArg.includes(":")) {
-        out = await runFigCommand("foo")
-      }
-      else {
-        out = await runFigCommand("bar")
-      }	
-      return out.split("\\n") 
-    },
-    trigger: SEE BELOW,
-    filterTerm: SEE BELOW
-  }	
+```ts
+{
+  args: {  
+    generator: {
+      custom: async function generateSuggestions(context: Array<string>): SuggestionObject {
+        const currentArg = context[-1]
+        let output;
+        if (currentArg.includes(":")) {
+          output = await runFigCommand("foo")
+        }
+        else {
+          output = await runFigCommand("bar")
+        }	
+        return output.split("\\n") 
+      },
+      trigger: SEE BELOW,
+      filterTerm: SEE BELOW
+    }	
+  }
 }
 ```
 
