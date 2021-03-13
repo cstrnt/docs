@@ -10,7 +10,6 @@ Fig will always be free for individual developers
 - Everything for the individual developer. We'll even host it for you.
 
 
-
 **Paid**
 
 Collaboration features hosted by Fig like shared apps, runbooks, autocomplete specs. As well as company specific access controls like provisioning, SAML, etc.
