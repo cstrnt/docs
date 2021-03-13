@@ -1,4 +1,4 @@
-Currently everything is free.
+Currently everything is free!
 
 We make it easy to build and share a completion spec with your team as outlined [here](Autocomplete/teams)
 
