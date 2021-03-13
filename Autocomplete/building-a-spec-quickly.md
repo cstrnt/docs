@@ -2,9 +2,8 @@
 
 Before reading on, please make sure you are familiar with our completion spec format
 
-[Getting Started with Autocomplete Specs](./getting-started.md)
-
-[API Reference](./api.md)
+- [Getting Started with Autocomplete Specs](./getting-started)
+- [API Reference](./api)
 
 ## Quick Summary
 
@@ -18,9 +17,9 @@ The below guide should offers advice and hacks for
 
 If you have more ideas, please comment and let us know (we will integrate them) 🙂
 
-## 1. Where to get the data
+## Where to get the data
 
-#### --help
+### --help
 
 Almost all modern CLI tools have `-h` or `--help` flag.
 
@@ -33,9 +32,9 @@ heroku addons --help
 git commit --help
 ```
 
-![](../assets/autocomplete/building-a-spec-quickly/--help.png)
+![](/docAssets/autocomplete/building-a-spec-quickly/--help.png)
 
-![](../assets/autocomplete/building-a-spec-quickly/--help2.png)
+![](/docAssets/autocomplete/building-a-spec-quickly/--help2.png)
 
 #### man pages
 
@@ -48,18 +47,13 @@ man git
 The **Synopsis** section gives you a good summary of the subcommands, options, and arguments.
 
 - **Symbol meanings**
-
   - Angle brackets `< >` mean something is mandatory
-
   - Square brackets `[ ]` mean something is optional
-
   - Pipe `|` means OR
-
     - e.g. `-n | --dry-run` are the same thing
-
   - Ellipsis `...` means the argument is variadic, so the user can input infinite arguments
 
-    ![](../assets/autocomplete/building-a-spec-quickly/variadic.png)
+  ![](/docAssets/autocomplete/building-a-spec-quickly/variadic.png)
 
 - **Options**
 
@@ -74,11 +68,11 @@ The **Synopsis** section gives you a good summary of the subcommands, options, a
 
   - Arguments can be recursive e.g. for git push we have  `[<repository> [<refspec>...]]`
 
-![](../assets/autocomplete/building-a-spec-quickly/recursive.png)
+![](/docAssets/autocomplete/building-a-spec-quickly/recursive.png)
 
 The **Options** section gives descriptions for all the options
 
-![](../assets/autocomplete/building-a-spec-quickly/options.png)
+![](/docAssets/autocomplete/building-a-spec-quickly/options.png)
 
 #### tab completions
 
@@ -90,17 +84,17 @@ You will have to disable Fig to make use of this trick.
 
 Type in a command, hit tab, wait a few seconds, and if prompted, hit tab again
 
-## 2. How to get the data
+## How to get the data
 
-#### scraping
+**Web scraping**
 
-https://webscraper.io/
+You can search for CLI reference or manuals online, and scrape those sites for the relevant data. This method works best if the reference is presented in a structured, list-like format.
 
-#### Copy / paste
+For example, with the [Git documentation](https://git-scm.com/docs/git), the options and command names, along with their descriptions, can be quickly scraped with a no-code scraper.
+
+We've had success using https://webscraper.io/.
+
+**Copy / paste**
 
 - This is pretty obvious.
 - Pushing it
-
-## 3. How format the data into a completion spec
-
-#### Multi-cursor

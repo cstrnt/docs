@@ -1,0 +1,158 @@
+{
+    "routes": [
+        {
+            "title": "Documentation",
+            "path": "",
+            "heading": true,
+            "routes": [
+                {
+                    "title": "Getting Started",
+                    "path": "getting-started.md"
+                },
+                {
+                    "title": "What is Fig?",
+                    "path": "what-is-fig.md"
+                },
+                {
+                    "title": "Installation",
+                    "path": "installation-steps.md"
+                },
+                {
+                    "title": "Autocomplete",
+                    "path": "autocomplete",
+                    "routes": [
+                        {
+                            "title": "Getting Started with Autocomplete",
+                            "path": "autocomplete/getting-started.md"
+                        },
+                        {
+                            "title": "Building Your First Autocomplete Spec",
+                            "path": "autocomplete/building-a-spec.md"
+                        },
+                        {
+                            "title": "API",
+                            "path": "autocomplete/api.md"
+                        },
+                        {
+                            "title": "Generators",
+                            "path": "autocomplete/generators.md"
+                        },
+                        {
+                            "title": "Building a Spec Quickly",
+                            "path": "autocomplete/building-a-spec-quickly.md"
+                        },
+                        {
+                            "title": "Executing Shell Commands",
+                            "path": "autocomplete/executing-shell-commands.md"
+                        },
+                        {
+                            "title": "Autocomplete for Teams",
+                            "path": "autocomplete/autocomplete-for-teams.md"
+                        },
+                        {
+                            "title": "Icon API",
+                            "path": "autocomplete/icon-api.md"
+                        },
+                        {
+                            "title": "Testing Autocomplete",
+                            "path": "autocomplete/testing-autocomplete.md"
+                        }
+                    ]
+                },
+                {
+                    "title": "Support",
+                    "path": "support",
+                    "routes": [
+                        {
+                            "title": "Errors",
+                            "path": "support/errors.md"
+                        },
+                        {
+                            "title": "FAQ",
+                            "path": "support/faq.md"
+                        },
+                        {
+                            "title": "Fig CLI",
+                            "path": "support/fig-cli.md"
+                        },
+                        {
+                            "title": "Security and Privacy",
+                            "path": "support/security-and-privacy.md"
+                        },
+                        {
+                            "title": "Secure Keyboard Input",
+                            "path": "support/secure-keyboard-input.md",
+                            "show": false
+                        },
+                        {
+                            "title": "Window is not being tracked",
+                            "path": "support/window-not-tracked.md",
+                            "show": false
+                        },
+                        {
+                            "title": "Fig has lost context",
+                            "path": "support/fig-lost-context.md",
+                            "show": false
+                        },
+                        {
+                            "title": "Good to go",
+                            "path": "support/good-to-go.md",
+                            "show": false
+                        },
+                        {
+                            "title": "Process is not a shell",
+                            "path": "support/process-not-a-shell.md",
+                            "show": false
+                        },
+                        {
+                            "title": "Icon bouncing",
+                            "path": "support/icon-bouncing.md",
+                            "show": false
+                        },
+                        {
+                            "title": "CLI tool is not installed",
+                            "path": "support/cli-tool-not-installed.md",
+                            "show": false
+                        },
+                        {
+                            "title": "Viewing Logs",
+                            "path": "support/view-logs.md",
+                            "show": false
+                        },
+                        {
+                            "title": "VSCode Integration",
+                            "path": "support/vscode-integration.md",
+                            "show": false
+                        }
+                    ]
+                },
+                {
+                    "title": "Future of Fig",
+                    "path": "future-of-fig",
+                    "routes": [
+                        {
+                            "title": "App Store",
+                            "path": "future-of-fig/app-store.md"
+                        },
+                        {
+                            "title": "Apps",
+                            "path": "future-of-fig/apps.md"
+                        },
+                        {
+                            "title": "Interactive Runbooks",
+                            "path": "future-of-fig/interactive-runbooks.md"
+                        },
+                        {
+                            "title": "Internal CLI Tool",
+                            "path": "future-of-fig/internal-cli-tool.md"
+                        },
+                        {
+                            "title": "Sidebar",
+                            "path": "future-of-fig/sidebar.md"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

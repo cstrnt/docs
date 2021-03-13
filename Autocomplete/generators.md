@@ -1,28 +1,13 @@
 # Generators
 
-On this page:
-
-- [Templates](#Templates)
-- [Script as a String](#Script as a String)
-- [Script as a Function](#Script as a Function)
-- [Custom Function](#Custom Function)
-- [Trigger](#Trigger)
-- [Filter Term](#Filter Term)
-
-
-
 ## Quick Summary
 
-Generators let you run shell commands on the user's device to *generate s*uggestions for arguments
+Generators let you run shell commands on the user's device to *generate* suggestions for arguments
 
 - There are 4 types of generators (see below)
-
 - Fig runs all shell commands in a separate login-shell at the current working directory of the user's terminal
-
-  [Executing Shell Commands](./executing-shell-commands.md)
-
+  - [Executing Shell Commands](./executing-shell-commands)
 - Generators are defined in the `generators` property of an Argument object.
-
   - The `generators` property can be a single Generator object or an array of Generator objects.
 
 ### Examples
@@ -35,7 +20,7 @@ Generators let you run shell commands on the user's device to *generate s*uggest
     - Arg object 1: Include a generator that runs `git remote` as a script
     - Arg object 2: Include generator that runs `git branch` as a script
 
-# Types of Generators
+## Types of Generators
 
 There are 4 types of generators. At the end of the day, they all give you the ability to define what shell command(s) to run. Then given that output, parse it however you'd like to produce Suggestion objects.
 
@@ -43,7 +28,7 @@ They types of Generator are listed below in order of customisability.
 
 We would say the vast majority of Generators you make will be using **Templates** and/or **Script as a String**
 
-## Templates
+### Templates
 
 Filepaths or folders are very common arguments for subcommands. e.g.
 
@@ -54,17 +39,18 @@ Filepaths or folders are very common arguments for subcommands. e.g.
 
 Because it's so common, Fig has predefined these arguments for you as a template.
 
-```jsx
+```js
 // Define templates inside generators in order
 // to use the filterTemplateSuggestions function
 
 args: {
-	generator: {
-		**template**: "filepaths",
-		**filterTemplateSuggestions**: (suggestions) => {       //optional
-				var jsOnly = suggestions.filter((elm) => return elm.endsWith(".js"))
-				return jsOnly
-		}
+  generator: {
+    template: "filepaths",
+    filterTemplateSuggestions: (suggestions) => { //optional
+      var jsOnly = suggestions.filter((elm) => return elm.endsWith(".js"))
+      return jsOnly
+    }
+  }
 }
 
 **OR**
@@ -72,7 +58,7 @@ args: {
 // Define templates directly underneath args if you don't need to filter
 // This also looks nicer and is easier to read
 args: {
-		**template**: "filepaths",
+  template: "filepaths",
 }
 ```
 
@@ -81,9 +67,9 @@ args: {
 | Property                  | Data Type                                                    | Required | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
 | template                  | string                                                       | ☐        | One of: <br />- "filepaths": shows all files AND folders at current working directory (like running ls). <br />- "folders": only shows folders in current working directory (like running ls then filtering on.<br /><br />These templates also allow users to type / at the end of a directory and Fig will run show the files/folders in the new subdirectory. |
-| filterTemplateSuggestions | function(suggestions: SuggestionObject[ ]): SuggestionObject | ☐        | **[Optional]**<br /><br />A function that let's you filter the array of Suggestion objects output by the template. e.g. if you only wanted to show files ending in `.js` you could use a filter method inside.<br /><br />**Function Parameters 1**<br />suggestions: an array of Suggestion objects that was output by the template <br /><br />**Output**<br />an array of Suggestion objects that was output by the template |
+| filterTemplateSuggestions | function(suggestions: SuggestionObject[ ]): SuggestionObject | ☐        | A function that let's you filter the array of Suggestion objects output by the template. e.g. if you only wanted to show files ending in `.js` you could use a filter method inside.<br /><br />**Function Parameters**<br />suggestions: an array of Suggestion objects that was output by the template <br /><br />**Output**<br />an array of Suggestion objects that was output by the template |
 
-**Notes & Hints**
+**Notes & Tips**
 
 - the `filterTemplateSuggestions` is only available if you define the the `template` inside a generator object
 - if you define `template` outside a generator object, this will override
@@ -91,35 +77,32 @@ args: {
 - Both templates have a trigger attached to them which cause Fig to re-run the suggestion object when a user types a `"/"`
   - e.g. if a user is in their Home (~) directory and inserts `cd Desktop/` Fig will render suggestions from the Desktop directory
 
-## Script as a String
+### Script as a String
 
 If you're suggesting something other than files or folders, we recommend using this. This let's you run a mini-script / command on the user's computer. The script runs in the user's current working directory and in the same shell. It's as if the user typed the command themselves.
 
 The output from the script you specify is then converted to Suggestion objects. We can do this for you with `splitOn` or you can process the output yourself with `postProcess`. Not that you must specify at least one of `splitOn` or `postProcess`.
 
-```jsx
+```js
 args: {
-		script: "git branch"
-
-		splitOn: "\\n",
-		// **OR**
-		postProcess: (scriptOutput: string) => {
-			var arr = scriptOutput.split("\\n")
-			
-			// return an array of Suggestion Objects
-			return arr.map((elm) => {
-					return {
-						name: elm,
-						icon: "🌱"
-					}
-			})
-		},
-		
-		// [optional]
-		trigger: (after: string, before: string) {
-			if before.countSlash !== after.countSlash return true
-			else return false
-		}
+  script: "git branch"
+  splitOn: "\\n",
+  // **OR**
+  postProcess: (scriptOutput: string) => {
+    var arr = scriptOutput.split("\\n")  
+	  // return an array of Suggestion Objects
+    return arr.map((elm) => {
+      return {
+        name: elm,
+        icon: "🌱"
+      }
+    })
+  },
+    // [optional]
+  trigger: (after: string, before: string) {
+    if before.countSlash !== after.countSlash return true
+    else return false
+  }
 }
 ```
 
@@ -130,15 +113,15 @@ args: {
 | script      | string                                                       | ☐        | The shell command to execute in the user's current working directory. The output is a string. It is then converted into an array of Suggestion objects using `splitOn` or `postProcess`<br /><br /> e.g. git branch → show all the remote git repos available |
 | postProcess | function(scriptOutput: string): SuggestionObject { } <br /><br />**Input**: output of executing script <br />**Output**: array of Suggestion objects | ☐        | **[Must specify one of postProcess or splitOn]** <br /><br />Define a function that takes a single input: the output of executing script. This function then return an array of Suggestion objects that will be rendered by Fig.  <br /><br />**Examples** <br />If `script` outputs data separated cleanly by newlines, or commas... <br />- split the input on new lines <br />- map or filter over your new array <br />- if each line had columns, split it again during the map<br />If `script` outputs json data,  use JSON.parse.<br /><br />**Other ideas** - use try/catch and return an empty array if there's an error |
 | splitOn     | string                                                       | ☐        | As splitting the output of `script` is such a common use case for `postProcess`, we build the `splitOn` property. Simply define a string to split the output of script on (e.g. `","` or `"\n"` and Fig will do the work of the `postProcess` prop for you.  <br /><br />This is a simple and fast method to generate suggestions. If you want any more control over the parsing (like filtering) or you want more control over the UI, use `postProcess`. <br /><br />e.g. if the script was `git branch`, specifying splitOn = \n would split the output on new lines and automatically create a Suggestion object for each element. |
-| trigger     | function                                                     | ☐        | **[Optional]** See [Trigger](#Trigger)                       |
-| filterTerm  | function or string                                           | ☐        | **[Optional]** See [Filter Term](#filter term)               |
+| trigger     | function                                                     | ☐        | See [Trigger](#Trigger)                       |
+| filterTerm  | function or string                                           | ☐        | See [Filter Term](#filter-term)               |
 
 **Notes & Hints**
 
 - In `script`: You can chain multiple commands together in the one string and then use javascript to combine  their output. e.g. `echo "The quick"; echo "brown fox";`
 - If a command goes to a pager (ie it scrolls instead of printing out normally) you can try piping it into `cat` e.g. `man git | cat`
 
-## Script as a Function
+### Script as a Function
 
 This is *exactly* the same as **Script as a String**, except you can define what script to run as a **Function**.
 
@@ -150,30 +133,26 @@ When running `git checkout master`, `context` equals ["git", "checkout", "master
 
 Context can discern different components including those grouped by quotes. When running `touch "new file"`, `context` equals ["touch", "new file"].
 
-```jsx
+```js
 args: {
-
-		// Take an array of what the user has already input
-		// e.g. 
-		script: function (context: Array<string>) { 
-					
-				var myScript; 
+  // Take an array of what the user has already input
+  // e.g. 
+  script: function (context: Array<string>) { 		
+    var myScript; 
 				
-				if (contextArray
-							
-				// Return string
-				return myScript
-		},
+    if (contextArray) {
+      // Return string
+      return myScript
+    },
 
-		splitOn: "",
-		// **OR**
-		postProcess: (scriptOutput: string) => {			
-		},
-
+    splitOn: "",
+    // **OR**
+    postProcess: (scriptOutput: string) => {			
+  },
 		
-		// [optional]
-		trigger: (after: string, before: string) {
-		}
+  // [optional]
+  trigger: (after: string, before: string) {
+  }
 }
 ```
 
@@ -184,28 +163,24 @@ The properties below are exactly the same as **Script as a String** except for t
 | Property    | Data Type                                                    | Required | Description                                                  |
 | ----------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------ |
 | script      | function(context: array): string { }<br /><br /> **Input**: output of executing script <br />**Output**: array of Suggestion objects | ☐        | The shell command to execute in the user's current working directory. The output is a string. It is then converted into an array of Suggestion objects using `splitOn` or `postProcess`<br /><br /> e.g. git branch → show all the remote git repos available |
-| postProcess |                                                              | ☐        | See [postProcess above]()                                    |
-| splitOn     |                                                              | ☐        | See [splitOn above]()                                        |
-| trigger     | function or string                                           | ☐        | **[Optional]** See [Trigger](#trigger)                       |
-| filterTerm  | function or string                                           | ☐        | **[Optional]** See [Filter Term]()                           |
+| postProcess |                                                              | ☐        | See [postProcess above](#script-as-a-string)                                    |
+| splitOn     |                                                              | ☐        | See [splitOn above](#script-as-a-string)                                        |
+| trigger     | function or string                                           | ☐        | See [Trigger](#trigger)                       |
+| filterTerm  | function or string                                           | ☐        | See [Filter Term](#filter-term)                           |
 
-## Custom Function
+### Custom Function
 
-**Note:** The [Script as a String](#Script as a String) or [Script as a Function](#Script as a Function) generator functions should suit your needs most of the time. Before writing a Custom Function, we suggest writing a simple version of the spec using generators first. If it captures > 60% or 70% of the use cases, worst case, Fig just won't show for the remaining use cases. You can also run a string that is multiple commands e.g. `echo "The quick"; echo "brown fox";` in Script as a String to get multiple outputs. Once that's working, then try a Custom Function.
+**Note:** The [Script as a String](#script-as-a-string) or [Script as a Function](#script-as-a-function) generator functions should suit your needs most of the time. Before writing a Custom Function, we suggest writing a simple version of the spec using generators first. If it captures > 60% or 70% of the use cases, worst case, Fig just won't show for the remaining use cases.
 
-If you are going to write a Custom Function, please email us, we'd love to help
+If you are going to write a Custom Function, please [email us](mailto:hello@withfig.com), we'd love to help.
 
-[hello@withfig.com](mailto:hello@withfig.com)
-
----
+--- 
 
 Fig's completion spec standard accounts for the vast majority of CLI tools, but some features don't work with the standard spec. Custom Functions inside generators enable you to write more complex logic and generate suggestions based on user input unique to a certain CLI tool.
 
 Custom Functions let you define a function that takes an array of the user's input, run multiple shell commands on the user's machine, and then generate suggestions to display. When using Custom Functions, you will likely have to work pretty closely with [Triggers](#trigger).
 
-Custom functions are so customisable, you could theoretically add one to an arg of your root command and build your own autocomplete server.
-
-### When to use Custom Functions
+#### When to use Custom Functions
 
 **1. An argument can be one of many types, and you want to provide suggestions once you have more context on what type the user is inputting**. 
 
@@ -229,32 +204,27 @@ Your function could do multiple regex matches on the argument the user is inputt
 
 ### Syntax
 
-```jsx
+```js
 args: {  
-	generator: {
-
-			custom: async function generateSuggestions(context: Array<string>): SuggestionObject {
-			
-					var currentArg = context[-1]
-					var out;
-		
-					if (currentArg.includes(":")) {
-							out = await runFigCommand("foo")
-					}
-					else {
-							out = await runFigCommand("bar")
-					}
-					
-					return out.split("\\n") 
-			},
-
-			trigger: SEE BELOW,
-			filterTerm: SEE BELOW
-	}	
+  generator: {
+    custom: async function generateSuggestions(context: Array<string>): SuggestionObject {
+      var currentArg = context[-1]
+      var out;
+      if (currentArg.includes(":")) {
+        out = await runFigCommand("foo")
+      }
+      else {
+        out = await runFigCommand("bar")
+      }	
+      return out.split("\\n") 
+    },
+    trigger: SEE BELOW,
+    filterTerm: SEE BELOW
+  }	
 }
 ```
 
-# Trigger
+## Trigger
 
 Defines a trigger that determines when to regenerate suggestions for this argument by re-running the generators.
 
@@ -275,10 +245,8 @@ fn(currentString: str, previousString: str): bool { }
 e.g. fn("desk", "Desktop/") if fn was:
 
 fn function (curr,prev) {
-
-	if (curr.lastIndexOf("/") !== prev.lastIndexOf("/")) return true
-	else return false
-
+  if (curr.lastIndexOf("/") !== prev.lastIndexOf("/")) return true
+  else return false
 })
 ```
 
@@ -288,13 +256,13 @@ When you use `cd` in Fig, we set a trigger for `/`.
 
 Every time a `/` is encountered, Fig will run the generator again to find the new folders under the new working directory.
 
-# Filter Term
+## Filter Term
 
 A function to determine what part of the string the user is currently typing we should use to filter our suggestions.
 
 The default is the full string containing the user's input.
 
-```jsx
+```js
 filterTerm: (currentString: string): string => {
 
 }
@@ -312,16 +280,16 @@ Here is the function we would write:
 
 ```java
 filterTerm: (curr) => {
-	if curr.includes("/") {
-		return curr.slice(curr.lastIndexOf("/") + 1)	
-	}
-	else return curr
+  if curr.includes("/") {
+    return curr.slice(curr.lastIndexOf("/") + 1)	
+  }
+  else return curr
 }
 ```
 
 Because this use case may be common, we have also defined a string that makes this simpler. Here, we filter by everything to the right of the last occurrence of our filterTerm property.
 
-```jsx
+```js
 filterTerm: "/"
 ```
 

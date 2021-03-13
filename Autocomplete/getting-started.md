@@ -1,22 +1,18 @@
 # Getting Started with Autocomplete Specs
 
-Fig takes a user's terminal input, splits it into an abstract syntax tree (AST), maps this AST to the completion-spec, works out the range of possibilities of what the user could input next (these possibilities are called suggestions), and renders the suggestions to the user.
+Autocomplete specs add support for a CLI tool to Fig's autocomplete. They serve two purposes:
 
-This is a lot of steps. The only thing you need to worry about is making a good completion spec.
-
-Fig's completion specs serve two purposes.
-
-1. **Define a CLI tool in a structured tree-like representation.** Mapping a user's Terminal input to this defined tree structure gives us the context on the user's input. This lets us accurately generate suggestions.
-
-   *e.g. we will generate very different suggestions if a user types `git` versus `git commit -`*
-
-2. **Contain Content** Completion specs provide content (like descriptions, icons etc) for the suggestions that are rendered to the user. If instructions on how to generate suggestions (like get all the files in this specific folder)
-
-i.e. your description of the `-m` option in `git commit -m` is what will displayed to the user!
+**1. Define a CLI tool in a structured tree-like representation.**
+  - Mapping a user's Terminal input to this defined tree structure gives us the context on the user's input. This lets us accurately generate suggestions.
+  - *e.g. we will generate very different suggestions if a user types `git` versus `git commit -`*
 
 
+**2. Contain Content Completion specs provide content (like descriptions, icons etc) for the suggestions that are rendered to the user.**
+  - If instructions on how to generate suggestions (like get all the files in this specific folder)
+  - i.e. your description of the `-m` option in `git commit -m` is what will displayed to the user!
 
-```jsx
+
+```js
 var completionSpec = { // Command Object
   name: "git",
   description: "the stupid content tracker",
@@ -26,210 +22,6 @@ var completionSpec = { // Command Object
 }
 ```
 
-## Building a Simple Autocomplete Spec
-
-In this section, you'll learn the autocompletion spec skeleton, and understand how to extend the format to any other CLI tool. To demonstrate, we'll build a basic `git` autocompletion spec that includes support for a few [subcommands](./api.md#Subcommand Object), [arguments](./api.md#Arg Object), and [options](./api.md#Option Object). 
-
-#### 1. Defining the spec
-
-To start, let's define the `completionSpec` variable, and add a `name` and `description`. Fig uses the `name` property when figuring out which spec to load. In this example, when the user enters "git" into their terminal, our completionSpec will be loaded. The name property should match the file name.
-
-Make sure to define your spec exactly as shown, using `var` instead of `const` or `let`. `completionSpec` is case sensitive!
-
-```js
-var completionSpec = {
-	name: "git",
-  description: "the stupid content tracker"
-}
-```
-
-#### 2. Adding a subcommand
-
-Now that we have our spec defined, let's add autocomplete support for `git checkout`, so Fig can suggest `checkout` when the user types in `git`.
-
-`checkout` is a subcommand of `git`, so we'll include it under `git`'s subcommands array. The subcommand object takes a name, description, as well as its own options and arguments. For more information on subcommand's properties, see [Subcommand Object](./api.md#Subcommand Object).
-
-```js
-var completionSpec = {
-  name: "git",
-  description: "the stupid content tracker",
-  subcommands: [
-    {
-      name: "checkout",
-      description: "Switch branches or restore working tree files"
-    }
-  ]
-}
-```
-
-#### 3. Adding options and args
-
-`git checkout` can also take an option or an argument. Now, we'll add support for the `-b` option flag, and also notify Fig to expect an argument following `checkout`. 
-
-Under the `checkout` subcommand, we added an empty args object. Including this argument object signals to Fig that there checkout potentially takes an argument.
-
-`-b` is an option of the `checkout` subcommand, so we'll nest the flag under the subcommand's `options` array. Options take a name and description, both of which will show in the Fig UI.
-
-Nested under the `-b` option is another argument named branch, telling Fig that the option accepts an argument. The Fig parser won't function properly if args aren't included when there should be user input, so don't forget to at least insert an empty `args: {}` propety when there should be an argument. Here, since both `args` and `options` are available under `checkout`, Fig expects either an option or an argument.
-
-```js
-var completionSpec = {
-  name: "git",
-  description: "the stupid content tracker",
-  subcommands: [
-    {
-      name: "checkout",
-      description: "Switch branches or restore working tree files",
-      args: {},
-      options: [
-        { 
-          name: ["-b"], 
-          description: "create and checkout a new branch", 
-          args: { 
-            name: "branch"
-          } 
-        },
-      ]
-    }
-  ]
-}
-```
-
-#### 4. Including an option to the root object
-
-We now have a spec that supports the primary functionality of `git checkout`. The root object, defined as `var completionSpec`, is actually a command in itself, with the same properties as the [Subcommand Object](./api.md#Subcommand Object).
-
-If we want to add support for `git --version`, the `--version` flag can be added as an option under the root object as follows:
-
-```js
-var completionSpec = {
-  name: "git",
-  description: "the stupid content tracker",
-  subcommands: [
-    {
-      name: "checkout",
-      description: "Switch branches or restore working tree files",
-      args: {},
-      options: [
-        { 
-          name: ["-b"], 
-          description: "create and checkout a new branch", 
-          args: { 
-            name: "branch"
-          } 
-        },
-      ]
-    },
-  ],
-  options: [
-    {
-      name: ["--version"],
-      description: ["View your current git version"]
-    }
-  ]
-}
-```
-
-
-
-## Adding Advanced Functionality with Generators
-
-Above, we put together a spec that supports `git checkout`, and `git --version`. But by using some of Fig's advanced features, we can improve autocomplete even more for `git checkout`.
-
-#### 1. Generating branches
-
-When a user runs `git checkout`, they typically want to move to another local branch. In our current configuration, Fig is expecting an argument in the form of the empty args object we added to checkout. Fig doesn't provide any suggestions by default when an empty args object is provided.
-
-```js
-{
-  name: "checkout",
-  description: "Switch branches or restore working tree files",
-  args: {},
-}
-```
-
-But, we can generate a list of suggestions that show the user all their local git branches using [Generators](./generators.md).
-
-Our generator runs a script in the user's terminal, and Fig will capture the output of that script. In our example, we want to run `git branch --no-color` to have git display the list of branches. 
-
-![](../assets/Autocomplete/getting-started/generatorScript.png)
-
-The `postProcess` function then captures the output from the terminal as a string, and within the function you can write logic to convert the output string into suggestions. In our function, we want to split our list of branches by the newline character, and convert each line containing a branch into a [Suggestion Object](#Suggestion Object) containing a `name` and `description`. Note that `postProcess` should return an array of generated suggestion objects.
-
-```js
-var branches = {
-  script: "git branch --no-color",
-  postProcess: function (out) {
-    if (out.startsWith("fatal:")) {
-      return []
-    }
-    return out.split('\n').map((branch) => {
-      return { name: branch.replace("*", "").trim(), description: "branch" }
-    })
-  }
-}
-```
-
-#### 2. Passing the generator into the completion spec
-
-The last step is to pass our new generator into the spec. Because we want the generator to get the list of branches following `git checkout`, we pass `branches` into the `checkout` subcommand's args. 
-
-```js
-var branches = {
-  script: "git branch --no-color",
-  postProcess: function (out) {
-    if (out.startsWith("fatal:")) {
-      return []
-    }
-    return out.split('\n').map((branch) => {
-      return { name: branch.replace("*", "").trim(), description: "branch" }
-    })
-  }
-}
-
-var completionSpec = {
-  name: "git",
-  description: "the stupid content tracker",
-  subcommands: [
-    {
-      name: "checkout",
-      description: "Switch branches or restore working tree files",
-      args: {
-        generators: branches
-      },
-      options: [
-        { 
-          name: ["-b"], 
-          description: "create and checkout a new branch", 
-          args: { 
-            name: "branch"
-          } 
-        },
-      ]
-    },
-  ],
-  options: [
-    {
-      name: ["--version"],
-      description: ["View your current git version"]
-    }
-  ]
-}
-```
-
-Our one branch, main, now shows as an autocomplete suggestion.
-
-![](../assets/Autocomplete/getting-started/generatedBranches.png)
-
-#### 2. Using argument templates
-
-Fig also has a few commonly used generators built-in as templates.
-
-
-
-
-
-The fastest way to learn is by looking at examples. We suggest looking at some of the completion specs for commands you know well, like [git](https://github.com/withfig/autocomplete/blob/master/specs/git.js) or [npm](https://github.com/withfig/autocomplete/blob/master/specs/npm.js). You should be able to pick up the format pretty quickly.
-
-**All current specs**: [withfig/autocomplete](https://github.com/withfig/autocomplete)
-
+- To start building your own spec, see [Building Your First Autocomplete Spec](/docs/autocomplete/building-a-spec).
+- Looking to dive deeper into everything you can do with specs? Check out the [API Reference](/docs/autocomplete/api).
+- Already built a spec and need to test it out? See [Testing Autocomplete](/docs/autocomplete/testing-autocomplete).

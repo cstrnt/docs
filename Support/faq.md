@@ -1,7 +1,5 @@
 # FAQs
 
-
-
 ## What is Fig built in?
 
 We are built natively in Swift. We are not built in Electron.
@@ -26,4 +24,4 @@ Fig is very upfront about how it manages your data. Fig does not collect any sen
 
 We'd love to hear why you uninstalled. If it's a bug, we want to fix it. If it didn't suit your needs, tell us and we will try and make it better.
 
-message [brendan@withfig.com](mailto:brendan@withfig.com)
+Message [brendan@withfig.com](mailto:brendan@withfig.com)
