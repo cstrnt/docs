@@ -7,7 +7,7 @@ In this section, you'll learn the autocompletion spec skeleton, and understand h
 To start, let's define the `completionSpec` variable, and add a `name` and `description`. Fig uses the `name` property when figuring out which spec to load. In this example, when the user enters "git" into their terminal, our completionSpec will be loaded. The name property should match the file name.
 
 ```ts
-const completionSpec:Fig.Spec = {
+const gitCompletionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker"
 }
@@ -20,7 +20,7 @@ Now that we have our spec defined, let's add autocomplete support for `git check
 `checkout` is a subcommand of `git`, so we'll include it under `git`'s subcommands array. The subcommand object takes a name, description, as well as its own options and arguments. For more information on subcommand's properties, see [Subcommand Object](/api#subcommand-object).
 
 ```ts
-const completionSpec:Fig.Spec = {
+const gitCompletionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -43,7 +43,7 @@ Under the `checkout` subcommand, we added an empty args object. Including this a
 Nested under the `-b` option is another argument named branch, telling Fig that the option accepts an argument. The Fig parser won't function properly if args aren't included when there should be user input, so don't forget to at least insert an empty `args: {}` propety when there should be an argument. Here, since both `args` and `options` are available under `checkout`, Fig expects either an option or an argument.
 
 ```ts
-const completionSpec:Fig.Spec = {
+const gitCompletionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -72,7 +72,7 @@ We now have a spec that supports the primary functionality of `git checkout`. Th
 If we want to add support for `git --version`, the `--version` flag can be added as an option under the root object as follows:
 
 ```ts
-const completionSpec:Fig.Spec = {
+const gitCompletionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -165,7 +165,7 @@ const branches: Fig.Generator = {
   }
 }
 
-const completionSpec:Fig.Spec = {
+const gitCompletionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [
@@ -229,7 +229,7 @@ const branches:Fig.Spec = {
   }
 }
 
-const completionSpec:Fig.Spec = {
+const gitCompletionSpec:Fig.Spec = {
   name: "git",
   description: "the stupid content tracker",
   subcommands: [

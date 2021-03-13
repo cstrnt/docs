@@ -2,10 +2,14 @@
 
 ## Root Object
 
-The root object is used to define every completion spec. It should be defined as a const and needs to have the type `Fig.Spec`. It must also be called `completionSpec`. `completionSpec` is actually a [Subcommand Object](#subcommand-object).
+The root object is used to define every completion spec. It should be declared as a const and needs to have the type `Fig.Spec`. It must also end with `completionSpec`. It is recommended to name the specs like this 
+```js
+[commandName]CompletionSpec
+```
+`completionSpec` is actually a [Subcommand Object](#subcommand-object).
 
 ```ts
-const someCompletionSpec:Fig.Spec = { // this is a Subcommand Object
+const gitCompletionSpec:Fig.Spec = { // this is a Subcommand Object
   name: "git",
   description: "the stupid content tracker"
 	...
