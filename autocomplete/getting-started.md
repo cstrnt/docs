@@ -17,7 +17,7 @@ var completionSpec = { // Command Object
   name: "git",
   description: "the stupid content tracker",
   subcommands: [ ... ], // Array of Command Objects 
-	options: [ ... ], // Array of Option Objects
+  options: [ ... ], // Array of Option Objects
   args: [ ... ], // Array of Arg Objects
 }
 ```
