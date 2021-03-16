@@ -13,7 +13,7 @@ Autocomplete specs add support for a CLI tool to Fig's autocomplete. They serve 
 
 
 ```ts
-const gitCompletionSpec:Fig.Spec = { // Command Object
+export const completion:Fig.Spec = { // Command Object
   name: "git",
   description: "the stupid content tracker",
   subcommands: [ ... ], // Array of Command Objects 
